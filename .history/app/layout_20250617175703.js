@@ -159,7 +159,7 @@ export default async function RootLayout({ children }) {
             {categories.length > 0 ? (
               categories.map((cat) => (
                 <Link
-                href={`/category/${cat.id}`}
+                href={`${cat.category_id}`}
                 ><li
                 key={cat.category_id}
                 style={{ cursor: "pointer", whiteSpace: "nowrap" }}

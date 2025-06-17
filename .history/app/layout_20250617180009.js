@@ -157,20 +157,19 @@ export default async function RootLayout({ children }) {
             }}
           >
             {categories.length > 0 ? (
-              categories.map((cat) => (
-                <Link
-                href={`/category/${cat.id}`}
-                ><li
-                key={cat.category_id}
-                style={{ cursor: "pointer", whiteSpace: "nowrap" }}
-              >
-                {cat.name_ar_c}
-              </li></Link>
-              
-              ))
-            ) : (
-              <li>لا توجد أقسام</li>
-            )}
+           <ul>
+  {categories.map((cat) => (
+   <li
+   key={cat.category_id}
+   style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+ >
+   <Link href={`/category/${cat.category_id}`}>
+     {cat.name_ar_c}
+   </Link>
+ </li>
+  ))}
+</ul>
+
           </ul>
         </nav>
 

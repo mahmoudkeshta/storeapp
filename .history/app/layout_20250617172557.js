@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -158,15 +158,12 @@ export default async function RootLayout({ children }) {
           >
             {categories.length > 0 ? (
               categories.map((cat) => (
-                <Link
-                href={`/category/${cat.id}`}
-                ><li
-                key={cat.category_id}
-                style={{ cursor: "pointer", whiteSpace: "nowrap" }}
-              >
-                {cat.name_ar_c}
-              </li></Link>
-              
+                <li
+                  key={cat.category_id}
+                  style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+                >
+                  {cat.nameـcategories}
+                </li>
               ))
             ) : (
               <li>لا توجد أقسام</li>

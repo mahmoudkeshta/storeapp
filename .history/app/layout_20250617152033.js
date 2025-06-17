@@ -1,6 +1,9 @@
+"use client"; // مهم جداً لو تستخدم Next 13 app directory مع React hooks
+
+import { useState } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,25 +19,22 @@ export const metadata = {
   description: "متجر نون - تصميم مشابه",
 };
 
-async function fetchCategories() {
-  try {
-    const res = await fetch("https://codeeio.com/ecommerc/categories.php", {
-      cache: "no-store", // أو حسب حاجتك للـ caching
-    });
-    const data = await res.json();
-    // حسب شكل الاستجابة، غالبا يكون data.data
-    return data.data || [];
-  } catch (error) {
-    console.error("خطأ في جلب الأقسام:", error);
-    return [];
-  }
-}
+export default function RootLayout({ children }) {
+  const [lang, setLang] = useState("ar"); // ar أو en
+  const [dir, setDir] = useState("rtl"); // rtl أو ltr
 
-export default async function RootLayout({ children }) {
-  const categories = await fetchCategories();
+  const toggleLang = () => {
+    if (lang === "ar") {
+      setLang("en");
+      setDir("ltr");
+    } else {
+      setLang("ar");
+      setDir("rtl");
+    }
+  };
 
   return (
-    <html lang="ar" dir="ltr">
+    <html lang={lang} dir={dir}>
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{ fontFamily: "var(--font-geist-sans)" }}
@@ -86,13 +86,19 @@ export default async function RootLayout({ children }) {
                 <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
-              تسجيل الدخول
+              {lang === "ar" ? "تسجيل الدخول" : "Login"}
             </span>
-            <span>English</span>
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={toggleLang}
+              title={lang === "ar" ? "Switch to English" : "التبديل إلى العربية"}
+            >
+              {lang === "ar" ? "English" : "العربية"}
+            </span>
           </div>
           <input
             type="search"
-            placeholder="ما الذي تبحث عنه؟"
+            placeholder={lang === "ar" ? "ما الذي تبحث عنه؟" : "What are you looking for?"}
             style={{
               flexGrow: 1,
               maxWidth: "400px",
@@ -128,11 +134,13 @@ export default async function RootLayout({ children }) {
               cursor: "pointer",
             }}
           >
-            <span style={{ fontSize: "1.8rem", color: "#f9a825" }}>ن</span>
-            <span>نون</span>
+            <span style={{ fontSize: "1.8rem", color: "#f9a825" }}>
+              {lang === "ar" ? "ن" : "N"}
+            </span>
+            <span>{lang === "ar" ? "نون" : "Noon"}</span>
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Flag_of_the_United_Arab_Emirates.svg/24px-Flag_of_the_United_Arab_Emirates.svg.png"
-              alt="علم الإمارات"
+              alt={lang === "ar" ? "علم الإمارات" : "UAE Flag"}
               style={{ height: "18px", borderRadius: "2px" }}
             />
             <span
@@ -142,7 +150,7 @@ export default async function RootLayout({ children }) {
                 color: "#555",
               }}
             >
-              توصيل إلى دبي
+              {lang === "ar" ? "توصيل إلى دبي" : "Deliver to Dubai"}
             </span>
           </div>
 
@@ -156,21 +164,43 @@ export default async function RootLayout({ children }) {
               flexWrap: "wrap",
             }}
           >
-            {categories.length > 0 ? (
-              categories.map((cat) => (
-                <Link
-                href={`/category/${cat.id}`}
-                ><li
-                key={cat.category_id}
+            {(lang === "ar"
+              ? [
+                  "الإلكترونيات",
+                  "أزياء الرجال",
+                  "أزياء النساء",
+                  "أزياء الأولاد",
+                  "المنزل",
+                  "الجمال والعطور",
+                  "الليبي",
+                  "الألعاب",
+                  "الرياضة",
+                  "الصحة والتغذية",
+                  "السيارات",
+                  "القرطاسية",
+                ]
+              : [
+                  "Electronics",
+                  "Men's Fashion",
+                  "Women's Fashion",
+                  "Kids' Fashion",
+                  "Home",
+                  "Beauty & Perfumes",
+                  "Libby",
+                  "Toys",
+                  "Sports",
+                  "Health & Nutrition",
+                  "Automotive",
+                  "Stationery",
+                ]
+            ).map((item) => (
+              <li
+                key={item}
                 style={{ cursor: "pointer", whiteSpace: "nowrap" }}
               >
-                {cat.name_ar_c}
-              </li></Link>
-              
-              ))
-            ) : (
-              <li>لا توجد أقسام</li>
-            )}
+                {item}
+              </li>
+            ))}
           </ul>
         </nav>
 

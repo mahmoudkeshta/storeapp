@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,23 +16,7 @@ export const metadata = {
   description: "متجر نون - تصميم مشابه",
 };
 
-async function fetchCategories() {
-  try {
-    const res = await fetch("https://codeeio.com/ecommerc/categories.php", {
-      cache: "no-store", // أو حسب حاجتك للـ caching
-    });
-    const data = await res.json();
-    // حسب شكل الاستجابة، غالبا يكون data.data
-    return data.data || [];
-  } catch (error) {
-    console.error("خطأ في جلب الأقسام:", error);
-    return [];
-  }
-}
-
-export default async function RootLayout({ children }) {
-  const categories = await fetchCategories();
-
+export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="ltr">
       <body
@@ -156,21 +140,27 @@ export default async function RootLayout({ children }) {
               flexWrap: "wrap",
             }}
           >
-            {categories.length > 0 ? (
-              categories.map((cat) => (
-                <Link
-                href={`/category/${cat.id}`}
-                ><li
-                key={cat.category_id}
+            {[
+              "الإلكترونيات",
+              "أزياء الرجال",
+              "أزياء النساء",
+              "أزياء الأولاد",
+              "المنزل",
+              "الجمال والعطور",
+              "الليبي",
+              "الألعاب",
+              "الرياضة",
+              "الصحة والتغذية",
+              "السيارات",
+              "القرطاسية",
+            ].map((item) => (
+              <li
+                key={item}
                 style={{ cursor: "pointer", whiteSpace: "nowrap" }}
               >
-                {cat.name_ar_c}
-              </li></Link>
-              
-              ))
-            ) : (
-              <li>لا توجد أقسام</li>
-            )}
+                {item}
+              </li>
+            ))}
           </ul>
         </nav>
 
