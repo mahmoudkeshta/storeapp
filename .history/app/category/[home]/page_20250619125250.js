@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { use } from "react";
-export default function PostPage({ params }) {
-  //const project1 = params.home;
-  const { home: project1 } = use(params);
 
+export default function PostPage({ params }) {
+  const project1 = params.home;
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);

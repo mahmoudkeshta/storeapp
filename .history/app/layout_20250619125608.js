@@ -175,14 +175,13 @@ export default async function RootLayout({ children }) {
             }}
           >
             {categories.length > 0 ? (
-     categories.map((cat) => (
-      <li key={cat.id || cat.category_id} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
-        <Link href={`/category/${cat.id}`}>
-          {cat.name_ar_c}
-        </Link>
-      </li>
-    ))
-    
+         categories.map((cat) => (
+          <li key={cat.category_id} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
+            <Link href={`/category/${cat.id}`}>
+              {cat.name_ar_c}
+            </Link>
+          </li>
+        ))
         
             
             ) : (

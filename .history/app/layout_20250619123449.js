@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -20,9 +19,10 @@ export const metadata = {
 async function fetchCategories() {
   try {
     const res = await fetch("https://codeeio.com/ecommerc/categories.php", {
-      cache: "no-store",
+      cache: "no-store", // أو حسب حاجتك للـ caching
     });
     const data = await res.json();
+    // حسب شكل الاستجابة، غالبا يكون data.data
     return data.data || [];
   } catch (error) {
     console.error("خطأ في جلب الأقسام:", error);
@@ -39,11 +39,10 @@ export default async function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{ fontFamily: "var(--font-geist-sans)" }}
       >
-        {/* ✅ الشريط العلوي */}
+        {/* الشريط العلوي الأصفر */}
         <header
           style={{
             backgroundColor: "#FFEA00",
-            position: "relative",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -52,7 +51,6 @@ export default async function RootLayout({ children }) {
             fontSize: "0.9rem",
             gap: "1rem",
             color: "#000",
-            height: "60px",
           }}
         >
           <div
@@ -84,45 +82,42 @@ export default async function RootLayout({ children }) {
                 height="18"
                 viewBox="0 0 24 24"
               >
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                <circle cx="12" cy="7" r="4" />
+                <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
+                <circle cx="12" cy="7" r="4"></circle>
               </svg>
               تسجيل الدخول
             </span>
             <span>English</span>
           </div>
-
-          {/* ✅ حقل البحث في منتصف الهيدر */}
           <input
-            type="search"
-            placeholder="ما الذي تبحث عنه؟"
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "700px",
-              padding: "0.4rem 1rem",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontSize: "1rem",
-              outline: "none",
-              zIndex: 1,
-              backgroundColor: "#fff",
-              direction: "rtl",         // ← يجعل اتجاه النص من اليمين لليسار
-              textAlign: "right",
-            }}
-          />
+  type="search"
+  placeholder="ما الذي تبحث عنه؟"
+  style={{
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "400px",
+    padding: "0.4rem 1rem",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+    fontSize: "1rem",
+    outline: "none",
+    zIndex: 1,
+    backgroundColor: "#fff",
+  }}
+/>
+
         </header>
 
-        {/* ✅ شريط الأقسام */}
+        {/* الشريط السفلي: الشعار و التوصيل و الأقسام */}
         <nav
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "0.8rem 5.9rem",
+            padding: "0.8rem 1.5rem",
             borderBottom: "1px solid #ddd",
             backgroundColor: "white",
             fontWeight: "bold",
@@ -131,7 +126,6 @@ export default async function RootLayout({ children }) {
             flexWrap: "wrap",
           }}
         >
-          {/* الشعار */}
           <div
             style={{
               display: "flex",
@@ -158,12 +152,6 @@ export default async function RootLayout({ children }) {
             </span>
           </div>
 
-          {/* ✅ الكلمة في المنتصف */}
-          <div style={{ fontSize: "1.1rem", color: "#f57c00" }}>
-            🔥 عروض اليوم
-          </div>
-
-          {/* الأقسام */}
           <ul
             style={{
               display: "flex",
@@ -175,16 +163,17 @@ export default async function RootLayout({ children }) {
             }}
           >
             {categories.length > 0 ? (
-     categories.map((cat) => (
-      <li key={cat.id || cat.category_id} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
-        <Link href={`/category/${cat.id}`}>
-          {cat.name_ar_c}
-        </Link>
-      </li>
-    ))
-    
-        
-            
+              categories.map((cat) => (
+                <Link
+                href={`/category/${cat.id}`}
+                ><li
+                key={cat.category_id}
+                style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+              >
+                {cat.name_ar_c}
+              </li></Link>
+              
+              ))
             ) : (
               <li>لا توجد أقسام</li>
             )}

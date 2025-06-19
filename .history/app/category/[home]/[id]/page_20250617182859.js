@@ -6,8 +6,8 @@ export default function PostPage({ params }) {
   const [products, setProducts] = useState([]);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [message, setMessage] = useState('');
-  const { id } = use(params); 
 
+  const projectid = params.id;
 
   useEffect(() => {
     // جلب بيانات المنتج الرئيسي

@@ -102,7 +102,7 @@ export default async function RootLayout({ children }) {
               left: "50%",
               top: "50%",
               transform: "translate(-50%, -50%)",
-              width: "700px",
+              width: "800px",
               padding: "0.4rem 1rem",
               borderRadius: "5px",
               border: "1px solid #ccc",
@@ -122,7 +122,7 @@ export default async function RootLayout({ children }) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "0.8rem 5.9rem",
+            padding: "0.8rem 1.9rem",
             borderBottom: "1px solid #ddd",
             backgroundColor: "white",
             fontWeight: "bold",
@@ -175,16 +175,13 @@ export default async function RootLayout({ children }) {
             }}
           >
             {categories.length > 0 ? (
-     categories.map((cat) => (
-      <li key={cat.id || cat.category_id} style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
-        <Link href={`/category/${cat.id}`}>
-          {cat.name_ar_c}
-        </Link>
-      </li>
-    ))
-    
-        
-            
+              categories.map((cat) => (
+                <Link href={`/category/${cat.id}`} key={cat.category_id}>
+                  <li style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
+                    {cat.name_ar_c}
+                  </li>
+                </Link>
+              ))
             ) : (
               <li>لا توجد أقسام</li>
             )}
