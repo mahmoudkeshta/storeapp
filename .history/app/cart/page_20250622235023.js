@@ -49,13 +49,11 @@ export default function CartPage() {
   };
 
   const updateQuantity = (orderItemId, newQuantity) => {
-    if (newQuantity < 1) return; // منع الكمية أقل من 1
     setCartItems((prev) =>
       prev.map((item) =>
         item.order_item_id === orderItemId ? { ...item, quantity: newQuantity } : item
       )
     );
-    // يمكنك هنا إضافة تحديث للسيرفر إذا أردت
   };
 
   const applyCoupon = () => {
@@ -114,37 +112,22 @@ export default function CartPage() {
     >
       <div>
         <h1 style={{ textAlign: "center", marginBottom: 20, color: "#ffce00" }}>عربة التسوق</h1>
-
-        {toastMessage && (
-          <div
-            style={{
-              backgroundColor: "#fffae6",
-              color: "#665c00",
-              padding: 10,
-              borderRadius: 6,
-              marginBottom: 20,
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            {toastMessage}
-          </div>
-        )}
-
         {loading ? (
           <p style={{ textAlign: "center", color: "#999" }}>جاري التحميل...</p>
         ) : cartItems.length === 0 ? (
           <p style={{ textAlign: "center", color: "#999" }}>سلة المشتريات فارغة</p>
         ) : (
+
           <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-            {cartItems.map((item) => (
-              <div key={item.order_item_id}>
-                {item.product_id ? (
-                  <Link
-                    href={`/category/home/${item.product_id}`}
+          {cartItems.map((item) => (
+            <div key={item.order_item_id}>
+              {item.product_id ? (
+                <Link
+                  to={`/category/home/${item.product_id}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <div
                     style={{
-                      textDecoration: "none",
-                      color: "inherit",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
@@ -153,7 +136,6 @@ export default function CartPage() {
                       backgroundColor: "#fff",
                       boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
                       border: "1px solid #ddd",
-                      marginBottom: 15,
                     }}
                   >
                     <img
@@ -224,25 +206,28 @@ export default function CartPage() {
                     >
                       حذف
                     </button>
-                  </Link>
-                ) : (
-                  <div
-                    style={{
-                      padding: 15,
-                      borderRadius: 12,
-                      backgroundColor: "#f8d7da",
-                      border: "1px solid #f5c6cb",
-                      textAlign: "center",
-                      color: "#721c24",
-                      marginBottom: 15,
-                    }}
-                  >
-                    بيانات المنتج غير متوفرة
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                </Link>
+              ) : (
+                <div
+                  style={{
+                    padding: 15,
+                    borderRadius: 12,
+                    backgroundColor: "#f8d7da",
+                    border: "1px solid #f5c6cb",
+                    textAlign: "center",
+                    color: "#721c24",
+                  }}
+                >
+                  بيانات المنتج غير متوفرة
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+
+
         )}
       </div>
 
@@ -253,7 +238,6 @@ export default function CartPage() {
           borderRadius: 12,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           border: "1px solid #ddd",
-          height: "fit-content",
         }}
       >
         <h2 style={{ marginBottom: 20, color: "#333" }}>ملخص الطلب</h2>
@@ -303,7 +287,6 @@ export default function CartPage() {
             fontSize: 16,
             cursor: "pointer",
           }}
-          onClick={() => alert("تم إتمام الطلب")}
         >
           إتمام الطلب
         </button>

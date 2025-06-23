@@ -49,13 +49,11 @@ export default function CartPage() {
   };
 
   const updateQuantity = (orderItemId, newQuantity) => {
-    if (newQuantity < 1) return; // منع الكمية أقل من 1
     setCartItems((prev) =>
       prev.map((item) =>
         item.order_item_id === orderItemId ? { ...item, quantity: newQuantity } : item
       )
     );
-    // يمكنك هنا إضافة تحديث للسيرفر إذا أردت
   };
 
   const applyCoupon = () => {
@@ -114,135 +112,92 @@ export default function CartPage() {
     >
       <div>
         <h1 style={{ textAlign: "center", marginBottom: 20, color: "#ffce00" }}>عربة التسوق</h1>
-
-        {toastMessage && (
-          <div
-            style={{
-              backgroundColor: "#fffae6",
-              color: "#665c00",
-              padding: 10,
-              borderRadius: 6,
-              marginBottom: 20,
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            {toastMessage}
-          </div>
-        )}
-
         {loading ? (
           <p style={{ textAlign: "center", color: "#999" }}>جاري التحميل...</p>
         ) : cartItems.length === 0 ? (
           <p style={{ textAlign: "center", color: "#999" }}>سلة المشتريات فارغة</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+         <like   href={`/category/home`} >
+           <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
             {cartItems.map((item) => (
-              <div key={item.order_item_id}>
-                {item.product_id ? (
-                  <Link
-                    href={`/category/home/${item.product_id}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "inherit",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: 15,
-                      borderRadius: 12,
-                      backgroundColor: "#fff",
-                      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                      border: "1px solid #ddd",
-                      marginBottom: 15,
-                    }}
-                  >
-                    <img
-                      src={item.image_url || "https://via.placeholder.com/80"}
-                      alt={item.nameproducts}
-                      style={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: 6,
-                        objectFit: "cover",
-                        marginRight: 15,
-                      }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{ margin: 0, color: "#333", fontWeight: "bold" }}>
-                        {item.nameproducts}
-                      </h3>
-                      <p style={{ margin: "5px 0", color: "#555" }}>
-                        السعر: {parseFloat(item.price).toFixed(2)} ر.س
-                      </p>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            updateQuantity(item.order_item_id, item.quantity - 1);
-                          }}
-                          disabled={item.quantity <= 1}
-                          style={{
-                            backgroundColor: "#ddd",
-                            border: "none",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          -
-                        </button>
-                        <span>{item.quantity}</span>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            updateQuantity(item.order_item_id, item.quantity + 1);
-                          }}
-                          style={{
-                            backgroundColor: "#ddd",
-                            border: "none",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
+              <div 
+                key={item.order_item_id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: 15,
+                  borderRadius: 12,
+                  backgroundColor: "#fff",
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  border: "1px solid #ddd",
+                }}
+              >
+                <img
+                  src={item.image_url || "https://via.placeholder.com/80"} // صورة افتراضية إذا لم تتوفر صورة
+                  alt={item.nameproducts}
+                  style={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: 6,
+                    objectFit: "cover",
+                    marginRight: 15,
+                  }}
+                />
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: 0, color: "#333", fontWeight: "bold" }}>{item.nameproducts}</h3>
+                  <p style={{ margin: "5px 0", color: "#555" }}>
+                    السعر: {parseFloat(item.price).toFixed(2)} ر.س
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        deleteCartItem(item.order_item_id);
-                      }}
+                      onClick={() => updateQuantity(item.order_item_id, item.quantity - 1)}
+                      disabled={item.quantity <= 1}
                       style={{
-                        backgroundColor: "#ffce00",
+                        backgroundColor: "#ddd",
                         border: "none",
-                        color: "#333",
-                        padding: "10px 15px",
-                        borderRadius: 6,
+                        padding: "5px 10px",
                         cursor: "pointer",
-                        marginLeft: 15,
                       }}
                     >
-                      حذف
+                      -
                     </button>
-                  </Link>
-                ) : (
-                  <div
-                    style={{
-                      padding: 15,
-                      borderRadius: 12,
-                      backgroundColor: "#f8d7da",
-                      border: "1px solid #f5c6cb",
-                      textAlign: "center",
-                      color: "#721c24",
-                      marginBottom: 15,
-                    }}
-                  >
-                    بيانات المنتج غير متوفرة
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.order_item_id, item.quantity + 1)}
+                      style={{
+                        backgroundColor: "#ddd",
+                        border: "none",
+                        padding: "5px 10px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      +
+                    </button>
                   </div>
-                )}
+                </div>
+                <button
+                  onClick={() => deleteCartItem(item.order_item_id)}
+                  style={{
+                    backgroundColor: "#ffce00",
+                    border: "none",
+                    color: "#333",
+                    padding: "10px 15px",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                    marginLeft: 15,
+                  }}
+                >
+                  حذف
+                </button>
               </div>
             ))}
           </div>
+         </like>
+
+
+
+
         )}
       </div>
 
@@ -253,7 +208,6 @@ export default function CartPage() {
           borderRadius: 12,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           border: "1px solid #ddd",
-          height: "fit-content",
         }}
       >
         <h2 style={{ marginBottom: 20, color: "#333" }}>ملخص الطلب</h2>
@@ -303,7 +257,6 @@ export default function CartPage() {
             fontSize: 16,
             cursor: "pointer",
           }}
-          onClick={() => alert("تم إتمام الطلب")}
         >
           إتمام الطلب
         </button>
