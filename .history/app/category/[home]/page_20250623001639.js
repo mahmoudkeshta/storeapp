@@ -8,18 +8,8 @@ export default function PostPage({ params }) {
 
   const [products, setProducts] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
-  const [likedItems, setLikedItems] = useState({});
-  const [cartItems, setCartItems] = useState([]);
-  const [userId, setUserId] = useState(null);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
-
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    setUserId(storedUserId);
-  }, []);
 
   useEffect(() => {
     if (project1) {
@@ -27,7 +17,6 @@ export default function PostPage({ params }) {
         .then((res) => res.json())
         .then((result) => {
           setProducts(result.data || []);
-          setCurrentPage(1); // إعادة ضبط الصفحة الأولى عند تغير البيانات
         })
         .catch(() => {
           setProducts([]);
@@ -40,58 +29,15 @@ export default function PostPage({ params }) {
     setTimeout(() => setToastMessage(""), 2500);
   };
 
-  const sendCartToServer = async ({ product_id, quantity, price }) => {
-    if (!userId) {
-      showToast("يجب تسجيل الدخول أولاً");
-      return false;
-    }
-    const total_amount = quantity * price;
-    const status = "pending";
-    try {
-      const response = await fetch("https://codeeio.com/ecommerc/cart/cart.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          user_id: userId,
-          product_id,
-          quantity: quantity.toString(),
-          price: price.toString(),
-          total_amount: total_amount.toString(),
-          status,
-        }).toString(),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        showToast("تم إضافة المنتج إلى السلة بنجاح!");
-        return true;
-      } else {
-        showToast(`خطأ: ${data.message || "لم يتم الإضافة"}`);
-        return false;
-      }
-    } catch {
-      showToast("حدث خطأ أثناء الإضافة للسلة");
-      return false;
-    }
-  };
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentProducts = products.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  const addToCart = async (product) => {
-    const quantity = 1;
-    const price = product.price || 0;
-    const success = await sendCartToServer({
-      product_id: product.product_id,
-      quantity,
-      price,
-    });
-    if (success) {
-      setCartItems((prev) => [...prev, { ...product, quantity }]);
-    }
-  };
-
-  const toggleLike = (productId) => {
-    setLikedItems((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const renderStars = (rating) => {
@@ -99,41 +45,15 @@ export default function PostPage({ params }) {
     const fullStars = Math.floor(rating);
     const halfStar = rating - fullStars >= 0.5;
     for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <span key={"full" + i} style={{ color: "#f5a623" }}>
-          ★
-        </span>
-      );
+      stars.push(<span key={"full" + i} style={{ color: "#f5a623" }}>★</span>);
     }
     if (halfStar) {
-      stars.push(
-        <span key="half" style={{ color: "#f5a623" }}>
-          ☆
-        </span>
-      );
+      stars.push(<span key="half" style={{ color: "#f5a623" }}>☆</span>);
     }
     while (stars.length < 5) {
-      stars.push(
-        <span key={"empty" + stars.length} style={{ color: "#ccc" }}>
-          ★
-        </span>
-      );
+      stars.push(<span key={"empty" + stars.length} style={{ color: "#ccc" }}>★</span>);
     }
     return stars;
-  };
-
-  // حساب المنتجات التي يجب عرضها في الصفحة الحالية
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = products.slice(indexOfFirstItem, indexOfLastItem);
-
-  // حساب عدد الصفحات
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-
-  // دالة تغيير الصفحة
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -203,56 +123,6 @@ export default function PostPage({ params }) {
               onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
-              {/* زر الإعجاب */}
-              <button
-                onClick={() => toggleLike(product.product_id)}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
-                  background: "transparent",
-                  border: "none",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                  color: likedItems[product.product_id] ? "red" : "#ccc",
-                  userSelect: "none",
-                  zIndex: 2,
-                }}
-                aria-label={likedItems[product.product_id] ? "إلغاء الإعجاب" : "أعجبني"}
-                title={likedItems[product.product_id] ? "إلغاء الإعجاب" : "أعجبني"}
-              >
-                {likedItems[product.product_id] ? "❤️" : "🤍"}
-              </button>
-
-              {/* زر السلة */}
-              <button
-                onClick={() => addToCart(product)}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  backgroundColor: "#0a74da",
-                  border: "none",
-                  borderRadius: "50%",
-                  color: "white",
-                  fontSize: "22px",
-                  cursor: "pointer",
-                  width: "40px",
-                  height: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "background-color 0.3s ease",
-                  zIndex: 2,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#095bb5")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#0a74da")}
-                aria-label="أضف إلى السلة"
-                title="أضف إلى السلة"
-              >
-                🛒
-              </button>
-
               <Link
                 href={`/category/home/${product.product_id}`}
                 style={{ textDecoration: "none", color: "inherit", flexGrow: 1 }}
@@ -283,7 +153,6 @@ export default function PostPage({ params }) {
               >
                 {product.nameproducts ?? "بدون اسم"}
               </h2>
-
               <p
                 style={{
                   color: "#666",
@@ -297,9 +166,8 @@ export default function PostPage({ params }) {
               >
                 {product.description_d ?? "لا يوجد وصف"}
               </p>
-
               <div style={{ marginBottom: "1px", textAlign: "right" }}>
-                {product.old_price && product.old_price > product.price ? (
+                {product.old_price ? (
                   <>
                     <span
                       style={{
@@ -333,7 +201,6 @@ export default function PostPage({ params }) {
                   </span>
                 )}
               </div>
-
               {product.rating && (
                 <div style={{ marginBottom: "10px", fontSize: "18px", textAlign: "right" }}>
                   {renderStars(product.rating)}
@@ -343,64 +210,70 @@ export default function PostPage({ params }) {
           ))}
         </div>
 
-        {/* ترقيم الصفحات */}
+        {/* أزرار الصفحات */}
         {totalPages > 1 && (
           <div
             style={{
-              marginTop: "20px",
-              textAlign: "center",
-              userSelect: "none",
-              fontWeight: "bold",
-              fontSize: "18px",
-              color: "#222",
               display: "flex",
               justifyContent: "center",
               gap: "10px",
+              marginTop: "30px",
               flexWrap: "wrap",
-              paddingBottom: "20px",
+              userSelect: "none",
             }}
           >
-            {[...Array(totalPages)].map((_, idx) => {
-              const page = idx + 1;
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ddd",
+                backgroundColor: "#fff",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              السابق
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => {
+              const pageNum = i + 1;
               return (
                 <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
                   style={{
-                    padding: "6px 12px",
+                    padding: "8px 12px",
                     borderRadius: "5px",
                     border: "1px solid #ddd",
-                    backgroundColor: page === currentPage ? "#0a74da" : "#fff",
-                    color: page === currentPage ? "white" : "#333",
+                    backgroundColor: currentPage === pageNum ? "#ffce00" : "white",
                     cursor: "pointer",
+                    fontWeight: currentPage === pageNum ? "bold" : "normal",
                   }}
                 >
-                  {page}
+                  {pageNum}
                 </button>
               );
             })}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                border: "1px solid #ddd",
+                backgroundColor: "#fff",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              التالي
+            </button>
           </div>
         )}
       </div>
-
-      {/* إشعارات التوست */}
-      {toastMessage && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            backgroundColor: "#333",
-            color: "white",
-            padding: "12px 20px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-            zIndex: 2000,
-          }}
-        >
-          {toastMessage}
-        </div>
-      )}
     </div>
   );
 }
